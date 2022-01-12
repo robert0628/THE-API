@@ -22,8 +22,9 @@ class Driver(models.Model):
     license_state = USStateField(blank=False)
     license_exp = models.DateField(blank=False)
     domicile_location = models.CharField(max_length=255, blank=False)
-    social_security_num = USSocialSecurityNumberField(blank=False, validators=[SSN_REGEX])
+    social_security_num = USSocialSecurityNumberField(blank=False, validators=[SSN_REGEX], unique=True)
     hire_date = models.DateField(blank=False)
+    termination_date = models.DateField(blank=True, null=True)
     employee_num = models.CharField(max_length=255, blank=False, unique=True)
     primary_phone_num = PhoneNumberField(blank=False, unique=True)
     email_address = models.EmailField(max_length=255, blank=False, unique=True)
@@ -35,8 +36,14 @@ class Driver(models.Model):
     emergency_contact_name = models.CharField(max_length=100, blank=False)
     emergency_contact_phone_num = PhoneNumberField(blank=False)
 
+    def __str__(self):
+        return f"Driver: {self.first_name} {self.last_name}"
 
 
+class Load(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    job_name = models.CharField(max_length=50, blank=False)
+    driver = models.ForeignKey(Driver, on_delete=models.PROTECT)
 
 
 
