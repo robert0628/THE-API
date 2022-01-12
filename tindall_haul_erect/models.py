@@ -4,26 +4,6 @@ from localflavor.us.models import USStateField, USZipCodeField, USSocialSecurity
 
 
 # Create your models here.
-"""
-Tractor #	
-Driver	
-LicNo	
-LicSt	
-Lic Exp	
-Domicile Location	
-DOB	Soc Sec #	
-Hire Date	
-Emp #	
-Phone #	
-Email Address	
-Home Address	
-Mailing Street Address	
-City and State	
-Zip Code	
-Emergency Contact	
-Phone #	2nd Contact
-"""
-
 
 class Driver(models.Model):
     id = models.BigAutoField(primary_key=True)
