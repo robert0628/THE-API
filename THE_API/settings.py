@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tindall_haul_erect',
+    'phonenumber_field',
+    'localflavor',
     'rest_framework',
 ]
 
