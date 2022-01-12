@@ -1,5 +1,5 @@
 from .models import Driver, Load
-from .serializers import DriverSerializer, LoadSerializer
+from .serializers import DriverSerializer, BasicDriverSerializer, LoadSerializer
 from rest_framework import viewsets
 
 
@@ -9,10 +9,19 @@ from rest_framework import viewsets
 class DriverViewSet(viewsets.ModelViewSet):
     """
     Description:
-    A ViewSet for viewing and editing driver information
+    A ViewSet for viewing and editing all driver information
     """
     queryset = Driver.objects.all()
     serializer_class = DriverSerializer
+
+
+class BasicDriverViewSet(viewsets.ModelViewSet):
+    """
+    Description:
+    A ViewSet for viewing and editing basic driver information
+    """
+    queryset = Driver.objects.all()
+    serializer_class = BasicDriverSerializer
 
 
 class LoadViewSet(viewsets.ModelViewSet):

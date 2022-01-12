@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
-from tindall_haul_erect.views import DriverViewSet, LoadViewSet
+from tindall_haul_erect.views import DriverViewSet, BasicDriverViewSet, LoadViewSet
 
 
 # Serializers define the API representation.
@@ -40,12 +40,17 @@ router.register(r'users', UserViewSet)
 driver_router = routers.DefaultRouter()
 driver_router.register(r'drivers', DriverViewSet, basename='drivers')
 
+basic_driver_router = routers.DefaultRouter()
+basic_driver_router.register(r'basic_drivers', BasicDriverViewSet, basename='basic_drivers')
+
 load_router = routers.DefaultRouter()
 load_router.register(r'loads', LoadViewSet, basename='loads')
+
 
 urlpatterns = [
     path('', include(router.urls)),
     path('', include(driver_router.urls)),
+    path('', include(basic_driver_router.urls)),
     path('', include(load_router.urls)),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))

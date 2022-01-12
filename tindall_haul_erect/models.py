@@ -42,8 +42,20 @@ class Driver(models.Model):
 
 class Load(models.Model):
     id = models.BigAutoField(primary_key=True)
-    job_name = models.CharField(max_length=50, blank=False)
     driver = models.ForeignKey(Driver, on_delete=models.PROTECT)
+    job_name = models.CharField(max_length=50, blank=False)
+    job_num = models.CharField(max_length=25, blank=False)
+    dispatch_date = models.DateField(blank=False)
+    billing_id = models.CharField(max_length=10, blank=False)
+    shipment_id = models.CharField(max_length=25, blank=False)
+    outbound_miles = models.PositiveIntegerField(blank=True, default=0)
+    pieces = models.CharField(max_length=10, blank=True, default="0")
+    delivery_type = models.CharField(max_length=10, blank=True, null=True)
+    canceled = models.BooleanField(default=False)
+    layover = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Load {self.job_name} {self.job_num} {self.dispatch_date}"
 
 
 
