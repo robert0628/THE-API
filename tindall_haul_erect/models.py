@@ -72,7 +72,7 @@ class PreStressBillingLookup(models.Model):
     model that represent a lookup table for pre-stress divisions to decide billable amounts based on outbound miles.
     """
     id = models.BigAutoField(primary_key=True)
-    outbound_miles = models.PositiveIntegerField(blank=False)
+    outbound_miles = models.PositiveIntegerField(blank=False, unique=True)
     base_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
     base_std_billable_amt = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
 
@@ -83,7 +83,7 @@ class UtilitiesBillingLookup(models.Model):
     model that represent a lookup table for utilities division to decide billable amounts based on outbound miles.
     """
     id = models.BigAutoField(primary_key=True)
-    outbound_miles = models.PositiveIntegerField(blank=False)
+    outbound_miles = models.PositiveIntegerField(blank=False, unique=True)
     base_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
     base_std_billable_amt = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
 
