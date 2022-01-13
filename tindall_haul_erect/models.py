@@ -12,6 +12,10 @@ SSN_REGEX = RegexValidator(
 
 
 class Driver(models.Model):
+    """
+    Description:
+    model that represent a truck driver.
+    """
     id = models.BigAutoField(primary_key=True)
     date_created = models.DateTimeField(auto_now_add=True)
     first_name = models.CharField(max_length=50, blank=False)
@@ -41,6 +45,10 @@ class Driver(models.Model):
 
 
 class Load(models.Model):
+    """
+    Description:
+    model that represent a dispatched load for a trucking delivery
+    """
     id = models.BigAutoField(primary_key=True)
     driver = models.ForeignKey(Driver, on_delete=models.PROTECT)
     job_name = models.CharField(max_length=50, blank=False)
@@ -48,7 +56,7 @@ class Load(models.Model):
     dispatch_date = models.DateField(blank=False)
     bill_to = models.CharField(max_length=10, blank=False)
     shipment_id = models.CharField(max_length=25, blank=False)
-    outbound_miles = models.PositiveIntegerField(blank=True, default=0)
+    outbound_miles = models.PositiveIntegerField(blank=False, default=0)
     pieces = models.CharField(max_length=10, blank=True, default="0")
     delivery_type = models.CharField(max_length=10, blank=True, null=True)
     canceled = models.BooleanField(default=False)
@@ -58,4 +66,24 @@ class Load(models.Model):
         return f"Load {self.job_name} {self.job_num} {self.dispatch_date}"
 
 
+class PreStressBillingLookup(models.Model):
+    """
+    Description:
+    model that represent a lookup table for pre-stress divisions to decide billable amounts based on outbound miles.
+    """
+    id = models.BigAutoField(primary_key=True)
+    outbound_miles = models.PositiveIntegerField(blank=False)
+    base_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
+    base_std_billable_amt = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+
+
+class UtilitiesBillingLookup(models.Model):
+    """
+    Description:
+    model that represent a lookup table for utilities division to decide billable amounts based on outbound miles.
+    """
+    id = models.BigAutoField(primary_key=True)
+    outbound_miles = models.PositiveIntegerField(blank=False)
+    base_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
+    base_std_billable_amt = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
 
