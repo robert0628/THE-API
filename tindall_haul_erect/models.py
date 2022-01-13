@@ -46,7 +46,7 @@ class Load(models.Model):
     job_name = models.CharField(max_length=50, blank=False)
     job_num = models.CharField(max_length=25, blank=False)
     dispatch_date = models.DateField(blank=False)
-    billing_id = models.CharField(max_length=10, blank=False)
+    bill_to = models.CharField(max_length=10, blank=False)
     shipment_id = models.CharField(max_length=25, blank=False)
     outbound_miles = models.PositiveIntegerField(blank=True, default=0)
     pieces = models.CharField(max_length=10, blank=True, default="0")
