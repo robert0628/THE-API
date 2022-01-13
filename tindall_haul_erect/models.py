@@ -2,6 +2,7 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from localflavor.us.models import USStateField, USZipCodeField, USSocialSecurityNumberField
 from django.core.validators import RegexValidator
+from datetime import time
 
 
 # Create your models here.
@@ -57,7 +58,7 @@ class Load(models.Model):
     bill_to = models.CharField(max_length=10, blank=False)
     shipment_id = models.CharField(max_length=25, blank=False)
     outbound_miles = models.PositiveIntegerField(blank=False, default=0)
-    pieces = models.CharField(max_length=10, blank=True, default="0")
+    pieces = models.CharField(max_length=10, blank=False, default="0")
     delivery_type = models.CharField(max_length=10, blank=True, null=True)
     canceled = models.BooleanField(default=False)
     layover = models.BooleanField(default=False)
@@ -86,4 +87,24 @@ class UtilitiesBillingLookup(models.Model):
     outbound_miles = models.PositiveIntegerField(blank=False, unique=True)
     base_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
     base_std_billable_amt = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+
+
+class Billing(models.Model):
+    """
+    Description:
+    model that represent a lookup table for utilities division to decide billable amounts based on outbound miles.
+    """
+    id = models.BigAutoField(primary_key=True)
+    load = models.ForeignKey(Load, on_delete=models.PROTECT)
+    base_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
+    site_base_std_billable_amt = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    addnl_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
+    sec_stop_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
+    wait_start_time = models.TimeField(blank=False, default=time())
+    wait_end_time = models.TimeField(blank=False, default=time())
+    wait_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
+    break_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
+    fringe_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
+    tindall_haul_erect_work_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
+
 
