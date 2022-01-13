@@ -94,8 +94,7 @@ class Billing(models.Model):
     Description:
     model that represent a lookup table for utilities division to decide billable amounts based on outbound miles.
     """
-    id = models.BigAutoField(primary_key=True)
-    load = models.ForeignKey(Load, on_delete=models.PROTECT)
+    load = models.OneToOneField(Load, on_delete=models.PROTECT, primary_key=True)
     base_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
     site_base_std_billable_amt = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
     addnl_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)

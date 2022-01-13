@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from tindall_haul_erect.views import DriverViewSet, BasicDriverViewSet, LoadViewSet, PreStressBillingLookupViewSet, \
-    UtilitiesBillingLookupViewSet
+    UtilitiesBillingLookupViewSet, BillingViewSet
 
 # Routers provide an easy way of automatically determining the URL conf. for ModelViewsets
 
@@ -38,12 +38,16 @@ utilities_billing_lookup_router = routers.DefaultRouter()
 utilities_billing_lookup_router.register(r'utilities_billing_lookup', UtilitiesBillingLookupViewSet,
                                          basename='utilities_billing_lookup')
 
+billing_router = routers.DefaultRouter()
+billing_router.register(r'billings', BillingViewSet, basename='billings')
+
 urlpatterns = [
     path('', include(driver_router.urls)),
     path('', include(basic_driver_router.urls)),
     path('', include(load_router.urls)),
     path('', include(prestress_billing_lookup_router.urls)),
     path('', include(utilities_billing_lookup_router.urls)),
+    path('', include(billing_router.urls)),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
