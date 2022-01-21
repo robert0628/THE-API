@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Driver, Load, PreStressBillingLookup, UtilitiesBillingLookup, Billing
+from .models import Driver, Load, PreStressBillingLookup, UtilitiesBillingLookup, Billing, RateLookup, UnloadingTimeLookup
 
 
 class DriverSerializer(serializers.ModelSerializer):
@@ -46,5 +46,20 @@ class BillingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Billing
         fields = '__all__'
+
+
+class RateLookupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RateLookup
+        fields = '__all__'
+
+
+class UnloadingTimeLookupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UnloadingTimeLookup
+        fields = '__all__'
+
+
+
 
 

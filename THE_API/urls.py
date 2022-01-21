@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from tindall_haul_erect.views import DriverViewSet, BasicDriverViewSet, LoadViewSet, PreStressBillingLookupViewSet, \
-    UtilitiesBillingLookupViewSet, BillingViewSet
+    UtilitiesBillingLookupViewSet, BillingViewSet, RateLookupViewSet, UnloadingTimeLookupViewSet
 
 # Routers provide an easy way of automatically determining the URL conf. for ModelViewsets
 
@@ -41,6 +41,15 @@ utilities_billing_lookup_router.register(r'utilities_billing_lookup', UtilitiesB
 billing_router = routers.DefaultRouter()
 billing_router.register(r'billings', BillingViewSet, basename='billings')
 
+
+rate_lookup_router = routers.DefaultRouter()
+rate_lookup_router.register(r'rate_lookup', RateLookupViewSet, basename='rate_lookup')
+
+
+unloading_time_lookup_router = routers.DefaultRouter()
+unloading_time_lookup_router.register(r'unloading_time_lookup', UnloadingTimeLookupViewSet, basename='unloading_time_lookup')
+
+
 urlpatterns = [
     path('', include(driver_router.urls)),
     path('', include(basic_driver_router.urls)),
@@ -48,6 +57,8 @@ urlpatterns = [
     path('', include(prestress_billing_lookup_router.urls)),
     path('', include(utilities_billing_lookup_router.urls)),
     path('', include(billing_router.urls)),
+    path('', include(rate_lookup_router.urls)),
+    path('', include(unloading_time_lookup_router.urls)),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

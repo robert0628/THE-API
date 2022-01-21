@@ -1,6 +1,7 @@
-from .models import Driver, Load, PreStressBillingLookup, UtilitiesBillingLookup, Billing
+from .models import Driver, Load, PreStressBillingLookup, UtilitiesBillingLookup, Billing, RateLookup, \
+    UnloadingTimeLookup
 from .serializers import DriverSerializer, BasicDriverSerializer, LoadSerializer, PreStressBillingLookupSerializer, \
-    UtilitiesBillingLookupSerializer, BillingSerializer
+    UtilitiesBillingLookupSerializer, BillingSerializer, RateLookupSerializer, UnloadingTimeLookupSerializer
 from rest_framework import viewsets
 
 
@@ -60,3 +61,20 @@ class BillingViewSet(viewsets.ModelViewSet):
     queryset = Billing.objects.all()
     serializer_class = BillingSerializer
 
+
+class RateLookupViewSet(viewsets.ModelViewSet):
+    """
+    Description:
+    A ViewSet for viewing and editing the rate lookup information
+    """
+    queryset = RateLookup.objects.all()
+    serializer_class = RateLookupSerializer
+
+
+class UnloadingTimeLookupViewSet(viewsets.ModelViewSet):
+    """
+    Description:
+    A ViewSet for viewing and editing the rate lookup information
+    """
+    queryset = UnloadingTimeLookup.objects.all()
+    serializer_class = UnloadingTimeLookupSerializer

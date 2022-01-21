@@ -131,3 +131,7 @@ class UnloadingTimeLookup(models.Model):
     pieces = models.CharField(max_length=10, blank=False)
     unloading_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
     addnl_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
+
+    class Meta:
+        unique_together = ('delivery_type', 'pieces',)
+
