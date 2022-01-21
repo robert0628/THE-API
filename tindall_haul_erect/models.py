@@ -107,3 +107,27 @@ class Billing(models.Model):
     tindall_haul_erect_work_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
 
 
+class RateLookup(models.Model):
+    """
+    Description:
+    model that represent a lookup table for the payable rates of the drivers and plants
+    """
+    type = models.CharField(max_length=50, primary_key=True)
+    rate = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+
+
+class UnloadingTimeLookup(models.Model):
+    """
+    Description:
+    model that represent a lookup table for the unloading what times based on the delivery type and pieces
+
+    Usage:
+        - Using the Billing model, we will need UnloadingTimeLookup data to be able to calculate the wait_hrs
+        - wait_hrs = wait_end_time - wait_start_time - unloading_hrs
+        - wait_hrs should be rounded to the nearest 1/4 of an hour
+    """
+    id = models.BigAutoField(primary_key=True)
+    delivery_type = models.CharField(max_length=10, blank=False)
+    pieces = models.CharField(max_length=10, blank=False)
+    unloading_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
+    addnl_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
