@@ -142,11 +142,42 @@ class UnloadingTimeLookup(models.Model):
         unique_together = ('delivery_type', 'pieces',)
 
 
-class SiteSettlements(models.Model):
+class SiteSettlement(models.Model):
     """
     Description:
     model that represent the settlements for each site
+
+    Usage:
+    - Based on who the Load is billed to, use either the PreStressBillingLookup or the UtilitiesBillingLookup
+      to lookup the base_std billable amount.
+    - For the other fields use the site's rate from the RateLookup table and the billable hours
+      to calculate the billable amounts.
     """
     billing = models.OneToOneField(Billing, on_delete=models.PROTECT, primary_key=True)
     base_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
-    site_base_std_billable_amt = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    addnl_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    sec_stop = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    layover = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    cancel = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    wait = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+
+
+class DriverSettlement(models.Model):
+    """
+    Description:
+    model that represent the settlements for each driver
+
+    Usage:
+    - Use driver's rate from the RateLookup table and the billable hours to calculate the billable amounts
+    """
+    billing = models.OneToOneField(Billing, on_delete=models.PROTECT, primary_key=True)
+    base_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    addnl_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    sec_stop = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    per_diem = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    cancel = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    wait = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    Break = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    fringe = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    tindall_haul_erect_work = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+
