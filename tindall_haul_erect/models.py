@@ -2,7 +2,7 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from localflavor.us.models import USStateField, USZipCodeField, USSocialSecurityNumberField
 from django.core.validators import RegexValidator
-
+from datetime import time
 
 # Create your models here.
 SSN_REGEX = RegexValidator(
@@ -12,6 +12,10 @@ SSN_REGEX = RegexValidator(
 
 
 class Driver(models.Model):
+    """
+    Description:
+    model that represent a truck driver.
+    """
     id = models.BigAutoField(primary_key=True)
     date_created = models.DateTimeField(auto_now_add=True)
     first_name = models.CharField(max_length=50, blank=False)
@@ -41,16 +45,20 @@ class Driver(models.Model):
 
 
 class Load(models.Model):
+    """
+    Description:
+    model that represent a dispatched load for a trucking delivery
+    """
     id = models.BigAutoField(primary_key=True)
     driver = models.ForeignKey(Driver, on_delete=models.PROTECT)
     job_name = models.CharField(max_length=50, blank=False)
     job_num = models.CharField(max_length=25, blank=False)
     dispatch_date = models.DateField(blank=False)
     bill_to = models.CharField(max_length=10, blank=False)
-    shipment_id = models.CharField(max_length=25, blank=False)
-    outbound_miles = models.PositiveIntegerField(blank=True, default=0)
-    pieces = models.CharField(max_length=10, blank=True, default="0")
-    delivery_type = models.CharField(max_length=10, blank=True, null=True)
+    shipment_id = models.CharField(max_length=25, blank=False, default="")
+    outbound_miles = models.PositiveIntegerField(blank=False, default=0)
+    pieces = models.CharField(max_length=10, blank=False, default="0")
+    delivery_type = models.CharField(max_length=10, blank=False, default="")
     canceled = models.BooleanField(default=False)
     layover = models.BooleanField(default=False)
 
@@ -58,4 +66,116 @@ class Load(models.Model):
         return f"Load {self.job_name} {self.job_num} {self.dispatch_date}"
 
 
+class PreStressBillingLookup(models.Model):
+    """
+    Description:
+    model that represent a lookup table for pre-stress divisions to decide billable amounts based on outbound miles.
+
+    Usage:
+    - Use the bill_to from the Load model to decide if this lookup table should be used (i.e. 100, 400, 700)
+    - Use outbound_miles from the Load model to lookup the base standard hours / base standard billable amount
+    """
+    outbound_miles = models.PositiveIntegerField(blank=False, unique=True, primary_key=True)
+    base_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
+    base_std_billable_amt = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+
+
+class UtilitiesBillingLookup(models.Model):
+    """
+    Description:
+    model that represent a lookup table for utilities division to decide billable amounts based on outbound miles.
+
+    Usage:
+    - Use the bill_to from the Load model to decide if this lookup table should be used (i.e. 200)
+    - Use outbound_miles from the Load model to lookup the base standard hours / base standard billable amount
+    """
+    outbound_miles = models.PositiveIntegerField(blank=False, unique=True, primary_key=True)
+    base_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
+    base_std_billable_amt = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+
+
+class Billing(models.Model):
+    """
+    Description:
+    model that represent the billable hours for the site and driver.
+    """
+    load = models.OneToOneField(Load, on_delete=models.PROTECT, primary_key=True)
+    base_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
+    addnl_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
+    sec_stop_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
+    wait_start_time = models.TimeField(blank=False, default=time())
+    wait_end_time = models.TimeField(blank=False, default=time())
+    wait_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
+    break_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
+    fringe_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
+    tindall_haul_erect_work_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
+
+
+class RateLookup(models.Model):
+    """
+    Description:
+    model that represent a lookup table for the payable rates of the drivers and plants
+    """
+    type = models.CharField(max_length=50, primary_key=True)
+    rate = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+
+
+class UnloadingTimeLookup(models.Model):
+    """
+    Description:
+    model that represent a lookup table for the unloading what times based on the delivery type and pieces
+
+    Usage:
+        - Using the Billing model, we will need UnloadingTimeLookup data to be able to calculate the wait_hrs
+        - wait_hrs = wait_end_time - wait_start_time - unloading_hrs
+        - wait_hrs should be rounded to the nearest 1/4 of an hour
+    """
+    id = models.BigAutoField(primary_key=True)
+    delivery_type = models.CharField(max_length=10, blank=False)
+    pieces = models.CharField(max_length=10, blank=False)
+    unloading_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
+    addnl_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
+
+    class Meta:
+        unique_together = ('delivery_type', 'pieces',)
+
+
+class SiteSettlement(models.Model):
+    """
+    Description:
+    model that represent the settlements for each site
+
+    Usage:
+    - Based on who the Load is billed to, use either the PreStressBillingLookup or the UtilitiesBillingLookup
+      to lookup the base_std billable amount.
+    - For the other fields use the site's rate from the RateLookup table and the billable hours
+      to calculate the billable amounts.
+    """
+    billing = models.OneToOneField(Billing, on_delete=models.PROTECT, primary_key=True)
+    base_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    addnl_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    sec_stop = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    layover = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    cancel = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    wait = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+
+
+class DriverSettlement(models.Model):
+    """
+    Description:
+    model that represent the settlements for each driver
+
+    Usage:
+    - Use driver's rate from the RateLookup table and the billable hours to calculate the billable amounts
+    """
+    billing = models.OneToOneField(Billing, on_delete=models.PROTECT, primary_key=True, default=0.0)
+    base_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    addnl_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    sec_stop = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    per_diem = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    cancel = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    wait = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    Break = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    fringe = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    tindall_haul_erect_work = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
 
