@@ -102,7 +102,7 @@ class Billing(models.Model):
     model that represent the billable hours for the site and driver.
     """
     load = models.OneToOneField(Load, on_delete=models.PROTECT, primary_key=True)
-    base_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
+    base_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
     addnl_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
     sec_stop_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
     wait_start_time = models.TimeField(blank=False, default=time())
@@ -154,12 +154,12 @@ class SiteSettlement(models.Model):
       to calculate the billable amounts.
     """
     billing = models.OneToOneField(Billing, on_delete=models.PROTECT, primary_key=True)
-    base_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
-    addnl_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
-    sec_stop = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
-    layover = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
-    cancel = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
-    wait = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    base_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    addnl_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    sec_stop = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    layover = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    cancel = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    wait = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
 
 
 class DriverSettlement(models.Model):
@@ -170,14 +170,14 @@ class DriverSettlement(models.Model):
     Usage:
     - Use driver's rate from the RateLookup table and the billable hours to calculate the billable amounts
     """
-    billing = models.OneToOneField(Billing, on_delete=models.PROTECT, primary_key=True)
-    base_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
-    addnl_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
-    sec_stop = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
-    per_diem = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
-    cancel = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
-    wait = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
-    Break = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
-    fringe = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
-    tindall_haul_erect_work = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    billing = models.OneToOneField(Billing, on_delete=models.PROTECT, primary_key=True, default=0.0)
+    base_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    addnl_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    sec_stop = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    per_diem = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    cancel = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    wait = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    Break = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    fringe = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+    tindall_haul_erect_work = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
 

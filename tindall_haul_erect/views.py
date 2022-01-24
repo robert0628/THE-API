@@ -1,7 +1,8 @@
 from .models import Driver, Load, PreStressBillingLookup, UtilitiesBillingLookup, Billing, RateLookup, \
-    UnloadingTimeLookup
+    UnloadingTimeLookup, DriverSettlement, SiteSettlement
 from .serializers import DriverSerializer, BasicDriverSerializer, LoadSerializer, PreStressBillingLookupSerializer, \
-    UtilitiesBillingLookupSerializer, BillingSerializer, RateLookupSerializer, UnloadingTimeLookupSerializer
+    UtilitiesBillingLookupSerializer, BillingSerializer, RateLookupSerializer, UnloadingTimeLookupSerializer, \
+    DriverSettlementSerializer, SiteSettlementSerializer
 from rest_framework import viewsets
 
 
@@ -78,3 +79,21 @@ class UnloadingTimeLookupViewSet(viewsets.ModelViewSet):
     """
     queryset = UnloadingTimeLookup.objects.all()
     serializer_class = UnloadingTimeLookupSerializer
+
+
+class DriverSettlementViewSet(viewsets.ModelViewSet):
+    """
+    Description:
+    A ViewSet for viewing and editing the driver settlements
+    """
+    queryset = DriverSettlement.objects.all()
+    serializer_class = DriverSettlementSerializer
+
+
+class SiteSettlementViewSet(viewsets.ModelViewSet):
+    """
+    Description:
+    A ViewSet for viewing and editing the site settlements
+    """
+    queryset = SiteSettlement.objects.all()
+    serializer_class = SiteSettlementSerializer
