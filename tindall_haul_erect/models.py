@@ -4,7 +4,6 @@ from localflavor.us.models import USStateField, USZipCodeField, USSocialSecurity
 from django.core.validators import RegexValidator
 from datetime import time
 
-
 # Create your models here.
 SSN_REGEX = RegexValidator(
     r'^(?!000|.+0{4})(?:\d{3}-\d{2}-\d{4})$',
@@ -71,6 +70,10 @@ class PreStressBillingLookup(models.Model):
     """
     Description:
     model that represent a lookup table for pre-stress divisions to decide billable amounts based on outbound miles.
+
+    Usage:
+    - Use the bill_to from the Load model to decide if this lookup table should be used (i.e. 100, 400, 700)
+    - Use outbound_miles from the Load model to lookup the base standard hours / base standard billable amount
     """
     id = models.BigAutoField(primary_key=True)
     outbound_miles = models.PositiveIntegerField(blank=False, unique=True)
@@ -82,6 +85,10 @@ class UtilitiesBillingLookup(models.Model):
     """
     Description:
     model that represent a lookup table for utilities division to decide billable amounts based on outbound miles.
+
+    Usage:
+    - Use the bill_to from the Load model to decide if this lookup table should be used (i.e. 200)
+    - Use outbound_miles from the Load model to lookup the base standard hours / base standard billable amount
     """
     id = models.BigAutoField(primary_key=True)
     outbound_miles = models.PositiveIntegerField(blank=False, unique=True)
@@ -92,11 +99,10 @@ class UtilitiesBillingLookup(models.Model):
 class Billing(models.Model):
     """
     Description:
-    model that represent a lookup table for utilities division to decide billable amounts based on outbound miles.
+    model that represent the billable hours for the site and driver.
     """
     load = models.OneToOneField(Load, on_delete=models.PROTECT, primary_key=True)
     base_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
-    site_base_std_billable_amt = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
     addnl_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
     sec_stop_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
     wait_start_time = models.TimeField(blank=False, default=time())
@@ -135,3 +141,12 @@ class UnloadingTimeLookup(models.Model):
     class Meta:
         unique_together = ('delivery_type', 'pieces',)
 
+
+class SiteSettlements(models.Model):
+    """
+    Description:
+    model that represent the settlements for each site
+    """
+    billing = models.OneToOneField(Billing, on_delete=models.PROTECT, primary_key=True)
+    base_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
+    site_base_std_billable_amt = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
