@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-x%7(=q%cw-r6@c5az#wz4_&h^k^p*vrq0im46p$iea!x3lvr(2
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '10.1.2.194'
+    # '10.1.2.194',
+    '192.168.1.40',
 ]
 
 
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'localflavor',
     'rest_framework',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -114,7 +116,8 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny'
-    ]
+    ],
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
 
