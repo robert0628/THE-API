@@ -9,8 +9,7 @@ from django_filters import rest_framework as df_filters
 from .filters import DriverFilter
 
 
-# Create your views here.
-
+# The default filter backend was set globally which allows the use of filterset_class see the settings.py
 
 class DriverViewSet(viewsets.ModelViewSet):
     """
