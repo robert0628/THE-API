@@ -9,7 +9,8 @@ class DriverFilter(filters.FilterSet):
     """
     Description:
     A FilterSet for ordering and exact matching the Driver model.
-    The Meta class combined with the declared filters automatically handles requests with searches, filters and ordering
+    The Meta class combined with the declared filters automatically handles
+    requests with searching, filtering and ordering.
 
     Example:
         The below url will order the response data by first_name
@@ -19,6 +20,13 @@ class DriverFilter(filters.FilterSet):
         fields=(
             ('first_name', 'first_name'),
             ('last_name', 'last_name'),
+            ('date_of_birth', 'date_of_birth'),
+            ('employee_num', 'employee_num'),
+            ('tractor_num', 'tractor_num'),
+            ('primary_phone_num', 'primary_phone_num'),
+            ('email_address', 'email_address'),
+            ('hire_date', 'hire_date'),
+            ('termination_date', 'termination_date'),
         )
     )
 
