@@ -4,6 +4,9 @@ from .serializers import DriverSerializer, BasicDriverSerializer, LoadSerializer
     UtilitiesBillingLookupSerializer, BillingSerializer, RateLookupSerializer, UnloadingTimeLookupSerializer, \
     DriverSettlementSerializer, SiteSettlementSerializer
 from rest_framework import viewsets
+from rest_framework import filters
+from django_filters import rest_framework as df_filters
+from .filters import DriverFilter
 
 
 # Create your views here.
@@ -16,6 +19,7 @@ class DriverViewSet(viewsets.ModelViewSet):
     """
     queryset = Driver.objects.all()
     serializer_class = DriverSerializer
+    filterset_class = DriverFilter
 
 
 class BasicDriverViewSet(viewsets.ModelViewSet):
