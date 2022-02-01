@@ -16,8 +16,11 @@ class DriverFilter(filters.FilterSet):
         The below url will order the response data by first_name
         url = 'http://192.168.1.40:8000/drivers/?first_name=&last_name=&o=first_name'
     """
+    first_name = filters.CharFilter(field_name="first_name", lookup_expr="contains")
+
     ordering = filters.OrderingFilter(
         fields=(
+            ('id', 'id'),
             ('first_name', 'first_name'),
             ('last_name', 'last_name'),
             ('date_of_birth', 'date_of_birth'),
