@@ -17,6 +17,7 @@ class DriverFilter(filters.FilterSet):
         url = 'http://192.168.1.40:8000/drivers/?first_name=&last_name=&o=first_name'
     """
     first_name = filters.CharFilter(field_name="first_name", lookup_expr="contains")
+    hire_date = filters.DateFilter(field_name="hire_date", lookup_expr="exact")
 
     ordering = filters.OrderingFilter(
         fields=(
