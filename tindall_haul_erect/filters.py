@@ -41,7 +41,7 @@ class DriverFilter(filters.FilterSet):
 
 class LoadFilter(filters.FilterSet):
     job_name = filters.CharFilter(field_name="job_name", lookup_expr="contains")
-    dispatchd_date = filters.DateFilter(field_name="dispatch_date", lookup_expr="exact")
+    dispatch_date = filters.DateFilter(field_name="dispatch_date", lookup_expr="exact")
 
     ordering = filters.OrderingFilter(
         fields=(
