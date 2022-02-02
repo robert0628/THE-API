@@ -4,9 +4,24 @@ from .serializers import DriverSerializer, BasicDriverSerializer, LoadSerializer
     UtilitiesBillingLookupSerializer, BillingSerializer, RateLookupSerializer, UnloadingTimeLookupSerializer, \
     DriverSettlementSerializer, SiteSettlementSerializer
 from rest_framework import viewsets
-from rest_framework import filters
-from django_filters import rest_framework as df_filters
 from .filters import DriverFilter
+from rest_framework.pagination import PageNumberPagination
+
+
+class PageNumberWithPageSizePagination(PageNumberPagination):
+    """
+    Description:
+    This class can be used so the api endpoint can accept paginating parameters in the request.
+    by Default PageNumberPagination has page_size_query_param set to None, this needs to be override
+    to be able to ser Rows per page.
+    set the pagination_class attribute in a viewset to this class.
+
+    Example:
+        class View(viewsets.ModelViewSet):
+            ...
+            pagination_class = PageNumberWithPageSizePagination
+    """
+    page_size_query_param = 'page_size'
 
 
 # The default filter backend was set globally which allows the use of filterset_class see the settings.py
@@ -19,6 +34,7 @@ class DriverViewSet(viewsets.ModelViewSet):
     queryset = Driver.objects.all()
     serializer_class = DriverSerializer
     filterset_class = DriverFilter
+    pagination_class = PageNumberWithPageSizePagination
 
 
 class BasicDriverViewSet(viewsets.ModelViewSet):
