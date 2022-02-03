@@ -115,6 +115,7 @@ class Billing(models.Model):
     break_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
     fringe_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
     tindall_haul_erect_work_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
+    approval = models.BooleanField(default=False)
 
 
 class RateLookup(models.Model):
