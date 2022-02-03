@@ -6,6 +6,8 @@ from .serializers import DriverSerializer, BasicDriverSerializer, LoadSerializer
 from rest_framework import viewsets
 from .filters import DriverFilter, LoadFilter, BillingFilter
 from rest_framework.pagination import PageNumberPagination
+from rest_framework import status
+from rest_framework.response import Response
 
 
 class PageNumberWithPageSizePagination(PageNumberPagination):
@@ -55,6 +57,26 @@ class LoadViewSet(viewsets.ModelViewSet):
     serializer_class = LoadSerializer
     filterset_class = LoadFilter
     pagination_class = PageNumberWithPageSizePagination
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        # lookup the base std hrs that correspond to the outbound miles
+        if serializer.data["delivery_type"] == "UTL":
+            base_std_hrs = UtilitiesBillingLookup.objects.get(
+                outbound_miles=serializer.data["outbound_miles"]).base_std_hrs
+        else:
+            base_std_hrs = PreStressBillingLookup.objects.get(
+                outbound_miles=serializer.data["outbound_miles"]).base_std_hrs
+
+        # create a default billing record associated with the load
+        created_load = Load.objects.get(id=serializer.data["id"])
+        Billing.objects.create(load=created_load, base_std_hrs=base_std_hrs)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class PreStressBillingLookupViewSet(viewsets.ModelViewSet):
