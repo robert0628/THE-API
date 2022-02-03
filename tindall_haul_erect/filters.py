@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from .models import Driver, Load
+from .models import Driver, Load, Billing
 
 # For more information about django_filters see the documentation here
 # https://django-filter.readthedocs.io/en/latest/guide/rest_framework.html
@@ -63,3 +63,24 @@ class LoadFilter(filters.FilterSet):
     class Meta:
         model = Load
         fields = ['job_name', 'driver']
+
+
+class BillingFilter(filters.FilterSet):
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('load', 'load'),
+            ('base_std_hrs', 'base_std_hrs'),
+            ('addnl_std_hrs', 'addnl_std_hrs'),
+            ('sec_stop_hrs', 'sec_stop_hrs'),
+            ('wait_start_time', 'wait_start_time'),
+            ('wait_end_time', 'wait_end_time'),
+            ('wait_hrs', 'wait_hrs'),
+            ('break_hrs', 'break_hrs'),
+            ('fringe_hrs', 'fringe_hrs'),
+            ('tindall_haul_erect_work_hrs', 'tindall_haul_erect_work_hrs'),
+        )
+    )
+
+    class Meta:
+        model = Billing
+        fields = ['load']
