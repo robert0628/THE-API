@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from .models import Driver, Load, Billing, Rate
+from .models import Driver, Load, Billing, Rate, PreStressBillingLookup, UtilitiesBillingLookup
 
 # For more information about django_filters see the documentation here
 # https://django-filter.readthedocs.io/en/latest/guide/rest_framework.html
@@ -98,3 +98,33 @@ class RateFilter(filters.FilterSet):
     class Meta:
         model = Rate
         fields = ['type']
+
+
+class PreStressBillingLookupFilter(filters.FilterSet):
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('id', 'id'),
+            ('outbound_miles', 'outbound_miles'),
+            ('base_std_hrs', 'base_std_hrs'),
+            ('base_std_billable_amt', 'base_std_billable_amt'),
+        )
+    )
+
+    class Meta:
+        model = PreStressBillingLookup
+        fields = ['outbound_miles', 'base_std_hrs', 'base_std_billable_amt']
+
+
+class UtilitiesBillingLookupFilter(filters.FilterSet):
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('id', 'id'),
+            ('outbound_miles', 'outbound_miles'),
+            ('base_std_hrs', 'base_std_hrs'),
+            ('base_std_billable_amt', 'base_std_billable_amt'),
+        )
+    )
+
+    class Meta:
+        model = UtilitiesBillingLookup
+        fields = ['outbound_miles', 'base_std_hrs', 'base_std_billable_amt']

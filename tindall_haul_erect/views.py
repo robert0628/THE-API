@@ -4,7 +4,8 @@ from .serializers import DriverSerializer, BasicDriverSerializer, LoadSerializer
     UtilitiesBillingLookupSerializer, BillingSerializer, RateSerializer, UnloadingTimeLookupSerializer, \
     DriverSettlementSerializer, SiteSettlementSerializer
 from rest_framework import viewsets
-from .filters import DriverFilter, LoadFilter, BillingFilter, RateFilter
+from .filters import DriverFilter, LoadFilter, BillingFilter, RateFilter, PreStressBillingLookupFilter, \
+    UtilitiesBillingLookupFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 from rest_framework.response import Response
@@ -86,6 +87,8 @@ class PreStressBillingLookupViewSet(viewsets.ModelViewSet):
     """
     queryset = PreStressBillingLookup.objects.all()
     serializer_class = PreStressBillingLookupSerializer
+    filterset_class = PreStressBillingLookupFilter
+    pagination_class = PageNumberWithPageSizePagination
 
 
 class UtilitiesBillingLookupViewSet(viewsets.ModelViewSet):
@@ -95,6 +98,8 @@ class UtilitiesBillingLookupViewSet(viewsets.ModelViewSet):
     """
     queryset = UtilitiesBillingLookup.objects.all()
     serializer_class = UtilitiesBillingLookupSerializer
+    filterset_class = UtilitiesBillingLookupFilter
+    pagination_class = PageNumberWithPageSizePagination
 
 
 class BillingViewSet(viewsets.ModelViewSet):
