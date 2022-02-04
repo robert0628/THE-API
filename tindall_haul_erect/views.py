@@ -1,7 +1,7 @@
-from .models import Driver, Load, PreStressBillingLookup, UtilitiesBillingLookup, Billing, RateLookup, \
+from .models import Driver, Load, PreStressBillingLookup, UtilitiesBillingLookup, Billing, Rate, \
     UnloadingTimeLookup, DriverSettlement, SiteSettlement
 from .serializers import DriverSerializer, BasicDriverSerializer, LoadSerializer, PreStressBillingLookupSerializer, \
-    UtilitiesBillingLookupSerializer, BillingSerializer, RateLookupSerializer, UnloadingTimeLookupSerializer, \
+    UtilitiesBillingLookupSerializer, BillingSerializer, RateSerializer, UnloadingTimeLookupSerializer, \
     DriverSettlementSerializer, SiteSettlementSerializer
 from rest_framework import viewsets
 from .filters import DriverFilter, LoadFilter, BillingFilter
@@ -108,13 +108,13 @@ class BillingViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberWithPageSizePagination
 
 
-class RateLookupViewSet(viewsets.ModelViewSet):
+class RateViewSet(viewsets.ModelViewSet):
     """
     Description:
     A ViewSet for viewing and editing the rate lookup information
     """
-    queryset = RateLookup.objects.all()
-    serializer_class = RateLookupSerializer
+    queryset = Rate.objects.all()
+    serializer_class = RateSerializer
 
 
 class UnloadingTimeLookupViewSet(viewsets.ModelViewSet):

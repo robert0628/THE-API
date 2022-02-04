@@ -118,7 +118,7 @@ class Billing(models.Model):
     approved = models.BooleanField(default=False)
 
 
-class RateLookup(models.Model):
+class Rate(models.Model):
     """
     Description:
     model that represent a lookup table for the payable rates of the drivers and plants
