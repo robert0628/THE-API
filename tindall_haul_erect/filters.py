@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from .models import Driver, Load, Billing
+from .models import Driver, Load, Billing, Rate
 
 # For more information about django_filters see the documentation here
 # https://django-filter.readthedocs.io/en/latest/guide/rest_framework.html
@@ -84,3 +84,17 @@ class BillingFilter(filters.FilterSet):
     class Meta:
         model = Billing
         fields = ['load']
+
+
+class RateFilter(filters.FilterSet):
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('id', 'id'),
+            ('type', 'type'),
+            ('rate', 'rate'),
+        )
+    )
+
+    class Meta:
+        model = Rate
+        fields = ['type']
