@@ -137,6 +137,7 @@ class UnloadingTimeLookup(models.Model):
         - Using the Billing model, we will need UnloadingTimeLookup data to be able to calculate the wait_hrs
         - wait_hrs = wait_end_time - wait_start_time - unloading_hrs
         - wait_hrs should be rounded to the nearest 1/4 of an hour
+        - Set the addnl_std_hrs for the billing record based on the delivery type and pieces
     """
     id = models.BigAutoField(primary_key=True)
     delivery_type = models.CharField(max_length=10, blank=False)
