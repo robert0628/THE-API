@@ -5,7 +5,7 @@ from .serializers import DriverSerializer, BasicDriverSerializer, LoadSerializer
     DriverSettlementSerializer, SiteSettlementSerializer
 from rest_framework import viewsets
 from .filters import DriverFilter, LoadFilter, BillingFilter, RateFilter, PreStressBillingLookupFilter, \
-    UtilitiesBillingLookupFilter
+    UtilitiesBillingLookupFilter, UnloadingTimeLookupFilter, SiteSettlementFilter, DriverSettlementFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 from rest_framework.response import Response
@@ -131,6 +131,8 @@ class UnloadingTimeLookupViewSet(viewsets.ModelViewSet):
     """
     queryset = UnloadingTimeLookup.objects.all()
     serializer_class = UnloadingTimeLookupSerializer
+    filterset_class = UnloadingTimeLookupFilter
+    pagination_class = PageNumberWithPageSizePagination
 
 
 class DriverSettlementViewSet(viewsets.ModelViewSet):
@@ -140,6 +142,8 @@ class DriverSettlementViewSet(viewsets.ModelViewSet):
     """
     queryset = DriverSettlement.objects.all()
     serializer_class = DriverSettlementSerializer
+    filterset_class = DriverSettlementFilter
+    pagination_class = PageNumberWithPageSizePagination
 
 
 class SiteSettlementViewSet(viewsets.ModelViewSet):
@@ -149,3 +153,5 @@ class SiteSettlementViewSet(viewsets.ModelViewSet):
     """
     queryset = SiteSettlement.objects.all()
     serializer_class = SiteSettlementSerializer
+    filterset_class = SiteSettlementFilter
+    pagination_class = PageNumberWithPageSizePagination

@@ -1,5 +1,7 @@
 from django_filters import rest_framework as filters
-from .models import Driver, Load, Billing, Rate, PreStressBillingLookup, UtilitiesBillingLookup
+from .models import Driver, Load, Billing, Rate, PreStressBillingLookup, UtilitiesBillingLookup, UnloadingTimeLookup, \
+    SiteSettlement, DriverSettlement
+
 
 # For more information about django_filters see the documentation here
 # https://django-filter.readthedocs.io/en/latest/guide/rest_framework.html
@@ -128,3 +130,56 @@ class UtilitiesBillingLookupFilter(filters.FilterSet):
     class Meta:
         model = UtilitiesBillingLookup
         fields = ['outbound_miles', 'base_std_hrs', 'base_std_billable_amt']
+
+
+class UnloadingTimeLookupFilter(filters.FilterSet):
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('id', 'id'),
+            ('delivery_type', 'delivery_type'),
+            ('pieces', 'pieces'),
+            ('unloading_hrs', 'unloading_hrs'),
+            ('addnl_std_hrs', 'addnl_std_hrs'),
+        )
+    )
+
+    class Meta:
+        model = UnloadingTimeLookup
+        fields = ['pieces', 'delivery_type', 'unloading_hrs', 'addnl_std_hrs']
+
+
+class SiteSettlementFilter(filters.FilterSet):
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('id', 'id'),
+            ('billing', 'billing'),
+            ('base_std', 'base_std'),
+            ('addnl_std', 'addnl_std'),
+            ('sec_stop', 'sec_stop'),
+            ('layover', 'layover'),
+            ('wait', 'wait'),
+        )
+    )
+
+    class Meta:
+        model = SiteSettlement
+        fields = ['billing']
+
+
+class DriverSettlementFilter(filters.FilterSet):
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('id', 'id'),
+            ('billing', 'billing'),
+            ('base_std', 'base_std'),
+            ('addnl_std', 'addnl_std'),
+            ('sec_stop', 'sec_stop'),
+            ('per_diem', 'per_diem'),
+            ('cancel', 'cancel'),
+            ('tindall_haul_erect_work', 'tindall_haul_erect_work'),
+        )
+    )
+
+    class Meta:
+        model = DriverSettlement
+        fields = ['billing']
