@@ -26,8 +26,8 @@ SECRET_KEY = 'django-insecure-x%7(=q%cw-r6@c5az#wz4_&h^k^p*vrq0im46p$iea!x3lvr(2
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    # '10.1.2.194',
-    '192.168.1.40',
+    '10.1.2.194',
+    # '192.168.1.40',
 ]
 
 
@@ -45,9 +45,11 @@ INSTALLED_APPS = [
     'localflavor',
     'rest_framework',
     'django_filters',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -114,11 +116,16 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
+    # see https://www.django-rest-framework.org/api-guide/filtering/ for filtering
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny'
     ],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
 
 
 # Internationalization

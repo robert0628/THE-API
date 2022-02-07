@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from tindall_haul_erect.views import DriverViewSet, BasicDriverViewSet, LoadViewSet, PreStressBillingLookupViewSet, \
-    UtilitiesBillingLookupViewSet, BillingViewSet, RateLookupViewSet, UnloadingTimeLookupViewSet, \
+    UtilitiesBillingLookupViewSet, BillingViewSet, RateViewSet, UnloadingTimeLookupViewSet, \
     DriverSettlementViewSet, SiteSettlementViewSet
 
 # Routers provide an easy way of automatically determining the URL conf. for ModelViewsets
@@ -43,7 +43,7 @@ billing_router = routers.DefaultRouter()
 billing_router.register(r'billings', BillingViewSet, basename='billings')
 
 rate_lookup_router = routers.DefaultRouter()
-rate_lookup_router.register(r'rate_lookup', RateLookupViewSet, basename='rate_lookup')
+rate_lookup_router.register(r'rates', RateViewSet, basename='rates')
 
 unloading_time_lookup_router = routers.DefaultRouter()
 unloading_time_lookup_router.register(r'unloading_time_lookup', UnloadingTimeLookupViewSet,
