@@ -4,7 +4,10 @@ from localflavor.us.models import USStateField, USZipCodeField, USSocialSecurity
 from django.core.validators import RegexValidator
 from datetime import time
 
-# Create your models here.
+# Note: each model is given an id field because react-admin uses this as a default indexer and it is just
+#       cleaner to have the rest api respond with an id instead of mapping it out in the front-end
+
+
 SSN_REGEX = RegexValidator(
     r'^(?!000|.+0{4})(?:\d{3}-\d{2}-\d{4})$',
     message="Invalid SSN, make sure the ssn is valid and use the xxx-xx-xxx format"
@@ -75,7 +78,8 @@ class PreStressBillingLookup(models.Model):
     - Use the bill_to from the Load model to decide if this lookup table should be used (i.e. 100, 400, 700)
     - Use outbound_miles from the Load model to lookup the base standard hours / base standard billable amount
     """
-    outbound_miles = models.PositiveIntegerField(blank=False, unique=True, primary_key=True)
+    id = models.BigAutoField(primary_key=True)
+    outbound_miles = models.PositiveIntegerField(blank=False, unique=True)
     base_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
     base_std_billable_amt = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
 
@@ -89,7 +93,8 @@ class UtilitiesBillingLookup(models.Model):
     - Use the bill_to from the Load model to decide if this lookup table should be used (i.e. 200)
     - Use outbound_miles from the Load model to lookup the base standard hours / base standard billable amount
     """
-    outbound_miles = models.PositiveIntegerField(blank=False, unique=True, primary_key=True)
+    id = models.BigAutoField(primary_key=True)
+    outbound_miles = models.PositiveIntegerField(blank=False, unique=True)
     base_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False)
     base_std_billable_amt = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
 
@@ -99,7 +104,8 @@ class Billing(models.Model):
     Description:
     model that represent the billable hours for the site and driver.
     """
-    load = models.OneToOneField(Load, on_delete=models.PROTECT, primary_key=True)
+    id = models.BigAutoField(primary_key=True)
+    load = models.OneToOneField(Load, on_delete=models.PROTECT, unique=True)
     base_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
     addnl_std_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
     sec_stop_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
@@ -109,26 +115,29 @@ class Billing(models.Model):
     break_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
     fringe_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
     tindall_haul_erect_work_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
+    approved = models.BooleanField(default=False)
 
 
-class RateLookup(models.Model):
+class Rate(models.Model):
     """
     Description:
     model that represent a lookup table for the payable rates of the drivers and plants
     """
-    type = models.CharField(max_length=50, primary_key=True)
+    id = models.BigAutoField(primary_key=True)
+    type = models.CharField(max_length=50, unique=True)
     rate = models.DecimalField(max_digits=6, decimal_places=2, blank=False)
 
 
 class UnloadingTimeLookup(models.Model):
     """
     Description:
-    model that represent a lookup table for the unloading what times based on the delivery type and pieces
+    model that represent a lookup table for the unloading times based on the delivery type and pieces
 
     Usage:
         - Using the Billing model, we will need UnloadingTimeLookup data to be able to calculate the wait_hrs
         - wait_hrs = wait_end_time - wait_start_time - unloading_hrs
         - wait_hrs should be rounded to the nearest 1/4 of an hour
+        - Set the addnl_std_hrs for the billing record based on the delivery type and pieces
     """
     id = models.BigAutoField(primary_key=True)
     delivery_type = models.CharField(max_length=10, blank=False)
@@ -151,7 +160,8 @@ class SiteSettlement(models.Model):
     - For the other fields use the site's rate from the RateLookup table and the billable hours
       to calculate the billable amounts.
     """
-    billing = models.OneToOneField(Billing, on_delete=models.PROTECT, primary_key=True)
+    id = models.BigAutoField(primary_key=True)
+    billing = models.OneToOneField(Billing, on_delete=models.PROTECT, unique=True)
     base_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
     addnl_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
     sec_stop = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
@@ -168,7 +178,8 @@ class DriverSettlement(models.Model):
     Usage:
     - Use driver's rate from the RateLookup table and the billable hours to calculate the billable amounts
     """
-    billing = models.OneToOneField(Billing, on_delete=models.PROTECT, primary_key=True, default=0.0)
+    id = models.BigAutoField(primary_key=True)
+    billing = models.OneToOneField(Billing, on_delete=models.PROTECT, unique=True)
     base_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
     addnl_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
     sec_stop = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
