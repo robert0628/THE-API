@@ -75,7 +75,8 @@ class LoadViewSet(viewsets.ModelViewSet):
 
         # create a default billing record associated with the load
         created_load = Load.objects.get(id=serializer.data["id"])
-        Billing.objects.create(load=created_load, base_std_hrs=base_std_hrs)
+        #TODO: filter for existing billing record for the driver so the driver only gets one break for multiple loads on the same day.
+        Billing.objects.create(load=created_load, base_std_hrs=base_std_hrs, break_hrs=0.5)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
