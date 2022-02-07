@@ -131,7 +131,7 @@ class Rate(models.Model):
 class UnloadingTimeLookup(models.Model):
     """
     Description:
-    model that represent a lookup table for the unloading what times based on the delivery type and pieces
+    model that represent a lookup table for the unloading times based on the delivery type and pieces
 
     Usage:
         - Using the Billing model, we will need UnloadingTimeLookup data to be able to calculate the wait_hrs

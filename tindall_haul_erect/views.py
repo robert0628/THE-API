@@ -65,7 +65,7 @@ class LoadViewSet(viewsets.ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
 
-        # lookup the base std hrs that correspond to the outbound miles
+        # Based on the delivery type lookup the base std hrs that correspond to the outbound miles
         if serializer.data["delivery_type"] == "UTL":
             base_std_hrs = UtilitiesBillingLookup.objects.get(
                 outbound_miles=serializer.data["outbound_miles"]).base_std_hrs
