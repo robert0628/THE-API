@@ -151,20 +151,29 @@ class BillingViewSet(viewsets.ModelViewSet):
             site_rate = Rate.objects.get(type='site').rate
             driver_rate = Rate.objects.get(type='driver').rate
 
-            # get the associated load to check if it was canceled or had a layover
+            # get the associated load to check if it was canceled or had a layover or is billed to THE
             layover = instance.load.layover
             cancel = instance.load.canceled
+            billed_to = instance.load.bill_to
 
             # create the site settlement record
-            # TODO need to add cancellation amount like layover talk to Eva
-            site_settlement = {
-                "billing": instance,
-                "base_std": calculate_payable_amt(instance.base_std_hrs, site_rate),
-                "addnl_std": calculate_payable_amt(instance.addnl_std_hrs, site_rate),
-                "sec_stop": calculate_payable_amt(instance.sec_stop_hrs, site_rate),
-                "layover": (Decimal("180.00") if layover else Decimal("0.00")),
-                "wait": calculate_payable_amt(instance.wait_hrs, site_rate)
-            }
+            site_settlement = {}
+            if billed_to == "THE":
+                # THE does not get a site settlement so have the record default to all zeros
+                site_settlement = {
+                    "billing": instance
+                }
+            else:
+                # TODO need to add cancellation amount like layover talk to Eva
+                site_settlement = {
+                    "billing": instance,
+                    "base_std": calculate_payable_amt(instance.base_std_hrs, site_rate),
+                    "addnl_std": calculate_payable_amt(instance.addnl_std_hrs, site_rate),
+                    "sec_stop": calculate_payable_amt(instance.sec_stop_hrs, site_rate),
+                    "layover": (Decimal("180.00") if layover else Decimal("0.00")),
+                    "wait": calculate_payable_amt(instance.wait_hrs, site_rate)
+                }
+
             SiteSettlement.objects.create(**site_settlement)
 
             # create the driver settlement record
