@@ -70,6 +70,7 @@ class LoadFilter(filters.FilterSet):
 class BillingFilter(filters.FilterSet):
     ordering = filters.OrderingFilter(
         fields=(
+            ('id', 'id'),
             ('load', 'load'),
             ('base_std_hrs', 'base_std_hrs'),
             ('addnl_std_hrs', 'addnl_std_hrs'),
