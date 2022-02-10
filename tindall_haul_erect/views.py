@@ -9,6 +9,8 @@ from .filters import DriverFilter, LoadFilter, BillingFilter, RateFilter, PreStr
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 from rest_framework.response import Response
+from decimal import Decimal, ROUND_HALF_UP
+from .utils import calculate_payable_amt
 
 
 class PageNumberWithPageSizePagination(PageNumberPagination):
@@ -60,6 +62,14 @@ class LoadViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberWithPageSizePagination
 
     def create(self, request, *args, **kwargs):
+        """
+            Description:
+            Extending the CreateModelMixin method so that a billing record will automatically be created whenever
+            a load is created and is connected to the created load. This is intended to limit the user in the front-end
+            from having to create billing records manually, it will give them a default billing record that can be
+            updated.
+        """
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -117,6 +127,67 @@ class BillingViewSet(viewsets.ModelViewSet):
     serializer_class = BillingSerializer
     filter_class = BillingFilter
     pagination_class = PageNumberWithPageSizePagination
+
+    def update(self, request, *args, **kwargs):
+        """
+            Description:
+            Extend the UpdateModelMixin update method, so that if the update is changing the approved field to
+            True then the appropriate site and driver settlements will also be automatically created
+            and connected to the updated billing record
+
+        """
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        is_approved = instance.approved
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if not is_approved and serializer.validated_data['approved']:
+            # If the current records approved field is False and the updated records approved field is True.
+            # Simpler explanation: if we are changing the approval from False to True then calculate the settlements
+
+            # get the site and driver rates
+            site_rate = Rate.objects.get(type='site').rate
+            driver_rate = Rate.objects.get(type='driver').rate
+
+            # get the associated load to check if it was canceled or had a layover
+            layover = instance.load.layover
+            cancel = instance.load.canceled
+
+            # create the site settlement record
+            # TODO need to add cancellation amount like layover talk to Eva
+            site_settlement = {
+                "billing": instance,
+                "base_std": calculate_payable_amt(instance.base_std_hrs, site_rate),
+                "addnl_std": calculate_payable_amt(instance.addnl_std_hrs, site_rate),
+                "sec_stop": calculate_payable_amt(instance.sec_stop_hrs, site_rate),
+                "layover": (Decimal("180.00") if layover else Decimal("0.00")),
+                "wait": calculate_payable_amt(instance.wait_hrs, site_rate)
+            }
+            SiteSettlement.objects.create(**site_settlement)
+
+            # create the driver settlement record
+            # TODO need to add cancellation amount like per diem talk to Eva
+            driver_settlement = {
+                "billing": instance,
+                "base_std": calculate_payable_amt(instance.base_std_hrs, driver_rate),
+                "addnl_std": calculate_payable_amt(instance.addnl_std_hrs, driver_rate),
+                "sec_stop": calculate_payable_amt(instance.sec_stop_hrs, driver_rate),
+                "per_diem": (Decimal("35.00") if layover else Decimal("0.00")),
+                "wait": calculate_payable_amt(instance.wait_hrs, driver_rate),
+                "Break": calculate_payable_amt(instance.break_hrs, driver_rate),
+                "fringe": calculate_payable_amt(instance.fringe_hrs, driver_rate),
+                "tindall_haul_erect_work": calculate_payable_amt(instance.tindall_haul_erect_work_hrs, driver_rate)
+            }
+            DriverSettlement.objects.create(**driver_settlement)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
 
 
 class RateViewSet(viewsets.ModelViewSet):
