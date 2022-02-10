@@ -9,7 +9,7 @@ class Command(BaseCommand):
     Bulk insert the pre-stress billing lookup data using pandas and django model bulk_create.
 
     Example (terminal):
-        $python manage.py add_utilities_billing ./tindall_haul_erect/csv_files/utilities_billing_lookup_data.csv
+        $ python manage.py add_utilities_billing ./tindall_haul_erect/csv_files/utilities_billing_lookup_data.csv
     """
     help = 'Uses the specified csv file to import pre-stress billing lookup data into the database'
 
