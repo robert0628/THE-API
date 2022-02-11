@@ -102,6 +102,33 @@ class LoadViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
+    def update(self, request, *args, **kwargs):
+        """
+            Description:
+            Extend the UpdateModelMixin update method, so that if the outbound miles filed is being updated we can
+            also update the billing record's base std hrs since the two are linked when the load was created.
+        """
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        prev_outbound_miles = instance.outbound_miles
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if prev_outbound_miles != serializer.validated_data["outbound_miles"]:
+            # if the outbound miles are being updated then also update the associated billing records base std hrs
+            base_std_hrs = self.lookup_base_std_hrs(
+                serializer.validated_data["delivery_type"], serializer.validated_data["outbound_miles"]
+            )
+            Billing.objects.filter(load=instance).update(base_std_hrs=base_std_hrs)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
 
 class PreStressBillingLookupViewSet(viewsets.ModelViewSet):
     """
@@ -141,7 +168,6 @@ class BillingViewSet(viewsets.ModelViewSet):
             Extend the UpdateModelMixin update method, so that if the update is changing the approved field to
             True then the appropriate site and driver settlements will also be automatically created
             and connected to the updated billing record
-
         """
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
