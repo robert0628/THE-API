@@ -61,6 +61,7 @@ class LoadViewSet(viewsets.ModelViewSet):
     filterset_class = LoadFilter
     pagination_class = PageNumberWithPageSizePagination
 
+    # TODO: need to handle when the lookups do not find anything just in case to handle failures
     def lookup_base_std_hrs(self, delivery_type: str, outbound_miles: int) -> Decimal:
         # Based on the delivery type lookup the base std hrs that correspond to the outbound miles
         # use the either the UtilitiesBillingLookup table or PreStressBillingLookup table
@@ -72,6 +73,12 @@ class LoadViewSet(viewsets.ModelViewSet):
                 outbound_miles=outbound_miles).base_std_hrs
 
         return base_std_hrs
+
+    def lookup_addnl_std_hrs(self, delivery_type: str, pieces: str) -> Decimal:
+        # Based on the delivery_type and pieces of the load lookup the addnl hrs
+        # use the UnloadingTimeLookup table
+        addnl_std_hrs = UnloadingTimeLookup.objects.get(delivery_type=delivery_type, pieces=pieces).addnl_std_hrs
+        return addnl_std_hrs
 
     def create(self, request, *args, **kwargs):
         """
@@ -90,6 +97,9 @@ class LoadViewSet(viewsets.ModelViewSet):
         # Based on the delivery type lookup the base std hrs that correspond to the outbound miles
         base_std_hrs = self.lookup_base_std_hrs(serializer.data["delivery_type"], serializer.data["outbound_miles"])
 
+        # Based on the delivery type and pieces of the load lookup the addnl std hrs
+        addnl_std_hrs = self.lookup_addnl_std_hrs(serializer.data["delivery_type"], serializer.data["pieces"])
+
         # create a default billing record associated with the load
         created_load = Load.objects.get(id=serializer.data["id"])
         existing_same_day_load = len(Load.objects.filter(
@@ -98,7 +108,12 @@ class LoadViewSet(viewsets.ModelViewSet):
         # no break if the driver already has existing loads associated with the current load dispatch date
         break_hrs = 0.0 if existing_same_day_load > 1 else 0.5
 
-        Billing.objects.create(load=created_load, base_std_hrs=base_std_hrs, break_hrs=break_hrs)
+        Billing.objects.create(
+            load=created_load,
+            base_std_hrs=base_std_hrs,
+            addnl_std_hrs=addnl_std_hrs,
+            break_hrs=break_hrs
+        )
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
@@ -111,16 +126,25 @@ class LoadViewSet(viewsets.ModelViewSet):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         prev_outbound_miles = instance.outbound_miles
+        prev_delivery_type = instance.delivery_type
+        prev_pieces = instance.pieces
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
         if prev_outbound_miles != serializer.validated_data["outbound_miles"]:
-            # if the outbound miles are being updated then also update the associated billing records base std hrs
+            # if the outbound miles are being updated then also update the associated billing record's base std hrs
             base_std_hrs = self.lookup_base_std_hrs(
                 serializer.validated_data["delivery_type"], serializer.validated_data["outbound_miles"]
             )
             Billing.objects.filter(load=instance).update(base_std_hrs=base_std_hrs)
+
+        if prev_pieces != serializer.validated_data["pieces"] or \
+                prev_delivery_type != serializer.validated_data["delivery_type"]:
+            # if the pieces or delivery_type fields are being updated then also updat the associated billing record's
+            # addnl std hrs
+            addnl_std_hrs = self.lookup_addnl_std_hrs(serializer.data["delivery_type"], serializer.data["pieces"])
+            Billing.objects.filter(load=instance).update(addnl_std_hrs=addnl_std_hrs)
 
         if getattr(instance, '_prefetched_objects_cache', None):
             # If 'prefetch_related' has been applied to a queryset, we need to
