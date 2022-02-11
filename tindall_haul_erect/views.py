@@ -61,6 +61,18 @@ class LoadViewSet(viewsets.ModelViewSet):
     filterset_class = LoadFilter
     pagination_class = PageNumberWithPageSizePagination
 
+    def lookup_base_std_hrs(self, delivery_type: str, outbound_miles: int) -> Decimal:
+        # Based on the delivery type lookup the base std hrs that correspond to the outbound miles
+        # use the either the UtilitiesBillingLookup table or PreStressBillingLookup table
+        if delivery_type == "UTL":
+            base_std_hrs = UtilitiesBillingLookup.objects.get(
+                outbound_miles=outbound_miles).base_std_hrs
+        else:
+            base_std_hrs = PreStressBillingLookup.objects.get(
+                outbound_miles=outbound_miles).base_std_hrs
+
+        return base_std_hrs
+
     def create(self, request, *args, **kwargs):
         """
             Description:
@@ -76,12 +88,7 @@ class LoadViewSet(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
 
         # Based on the delivery type lookup the base std hrs that correspond to the outbound miles
-        if serializer.data["delivery_type"] == "UTL":
-            base_std_hrs = UtilitiesBillingLookup.objects.get(
-                outbound_miles=serializer.data["outbound_miles"]).base_std_hrs
-        else:
-            base_std_hrs = PreStressBillingLookup.objects.get(
-                outbound_miles=serializer.data["outbound_miles"]).base_std_hrs
+        base_std_hrs = self.lookup_base_std_hrs(serializer.data["delivery_type"], serializer.data["outbound_miles"])
 
         # create a default billing record associated with the load
         created_load = Load.objects.get(id=serializer.data["id"])
@@ -178,7 +185,6 @@ class BillingViewSet(viewsets.ModelViewSet):
             SiteSettlement.objects.create(**site_settlement)
 
             # create the driver settlement record
-            # TODO need to add cancellation amount like per diem talk to Eva
             driver_settlement = {
                 "billing": instance,
                 "base_std": calculate_payable_amt(instance.base_std_hrs, driver_rate),
