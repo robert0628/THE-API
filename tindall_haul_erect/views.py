@@ -204,7 +204,7 @@ class BillingViewSet(viewsets.ModelViewSet):
                     "addnl_std": calculate_payable_amt(instance.addnl_std_hrs, site_rate),
                     "sec_stop": calculate_payable_amt(instance.sec_stop_hrs, site_rate),
                     "layover": (Decimal("180.00") if layover else Decimal("0.00")),
-                    "cancel": calculate_payable_amt(Decimal("2.0"), site_rate),
+                    "cancel": (calculate_payable_amt(Decimal("2.0"), site_rate) if cancel else Decimal("0.00")),
                     "wait": calculate_payable_amt(instance.wait_hrs, site_rate)
                 }
 
@@ -217,7 +217,7 @@ class BillingViewSet(viewsets.ModelViewSet):
                 "addnl_std": calculate_payable_amt(instance.addnl_std_hrs, driver_rate),
                 "sec_stop": calculate_payable_amt(instance.sec_stop_hrs, driver_rate),
                 "per_diem": (Decimal("35.00") if layover else Decimal("0.00")),
-                "cancel": calculate_payable_amt(Decimal("2.0"), driver_rate),
+                "cancel": (calculate_payable_amt(Decimal("2.0"), driver_rate) if cancel else Decimal("0.00")),
                 "wait": calculate_payable_amt(instance.wait_hrs, driver_rate),
                 "Break": calculate_payable_amt(instance.break_hrs, driver_rate),
                 "fringe": calculate_payable_amt(instance.fringe_hrs, driver_rate),
