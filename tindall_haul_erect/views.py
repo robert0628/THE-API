@@ -77,7 +77,11 @@ class LoadViewSet(viewsets.ModelViewSet):
     def lookup_addnl_std_hrs(self, delivery_type: str, pieces: str) -> Decimal:
         # Based on the delivery_type and pieces of the load lookup the addnl hrs
         # use the UnloadingTimeLookup table
-        addnl_std_hrs = UnloadingTimeLookup.objects.get(delivery_type=delivery_type, pieces=pieces).addnl_std_hrs
+        try:
+            addnl_std_hrs = UnloadingTimeLookup.objects.get(delivery_type=delivery_type, pieces=pieces).addnl_std_hrs
+        except UnloadingTimeLookup.DoesNotExist:
+            addnl_std_hrs = Decimal("0.00")
+
         return addnl_std_hrs
 
     def create(self, request, *args, **kwargs):
