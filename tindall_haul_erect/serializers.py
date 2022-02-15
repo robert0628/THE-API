@@ -43,6 +43,7 @@ class LoadSerializer(serializers.ModelSerializer):
             'layover',
             'billing__approved',
             'billing__id',
+            'siteSettlement__id',
         ]
 
 

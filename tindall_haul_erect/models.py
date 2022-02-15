@@ -76,6 +76,10 @@ class Load(models.Model):
     def billing__id(self):
         return self.billing.id
 
+    @property
+    def siteSettlement__id(self):
+        return self.sitesettlement.id
+
 
 class PreStressBillingLookup(models.Model):
     """
