@@ -28,7 +28,21 @@ class BasicDriverSerializer(serializers.ModelSerializer):
 class LoadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Load
-        fields = '__all__'
+        fields = [
+            'id',
+            'driver',
+            'job_name',
+            'job_num',
+            'dispatch_date',
+            'bill_to',
+            'shipment_id',
+            'outbound_miles',
+            'pieces',
+            'delivery_type',
+            'canceled',
+            'layover',
+            'approved',
+        ]
 
 
 class PreStressBillingLookupSerializer(serializers.ModelSerializer):
