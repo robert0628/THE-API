@@ -202,10 +202,12 @@ class BillingViewSet(viewsets.ModelViewSet):
             if billed_to == "THE":
                 # THE does not get a site settlement so have the record default to all zeros
                 site_settlement = {
+                    "load": instance.load,
                     "billing": instance
                 }
             else:
                 site_settlement = {
+                    "load": instance.load,
                     "billing": instance,
                     "base_std": base_std_amt,
                     "addnl_std": calculate_payable_amt(instance.addnl_std_hrs, site_rate),
@@ -219,6 +221,7 @@ class BillingViewSet(viewsets.ModelViewSet):
 
             # create the driver settlement record
             driver_settlement = {
+                "load": instance.load,
                 "billing": instance,
                 "base_std": calculate_payable_amt(instance.base_std_hrs, driver_rate),
                 "addnl_std": calculate_payable_amt(instance.addnl_std_hrs, driver_rate),

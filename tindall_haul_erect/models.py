@@ -161,6 +161,7 @@ class SiteSettlement(models.Model):
       to calculate the billable amounts.
     """
     id = models.BigAutoField(primary_key=True)
+    load = models.OneToOneField(Load, on_delete=models.PROTECT, unique=True)
     billing = models.OneToOneField(Billing, on_delete=models.PROTECT, unique=True)
     base_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
     addnl_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
@@ -179,6 +180,7 @@ class DriverSettlement(models.Model):
     - Use driver's rate from the RateLookup table and the billable hours to calculate the billable amounts
     """
     id = models.BigAutoField(primary_key=True)
+    load = models.OneToOneField(Load, on_delete=models.PROTECT, unique=True)
     billing = models.OneToOneField(Billing, on_delete=models.PROTECT, unique=True)
     base_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
     addnl_std = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
