@@ -41,7 +41,8 @@ class LoadSerializer(serializers.ModelSerializer):
             'delivery_type',
             'canceled',
             'layover',
-            'approved',
+            'billing__approved',
+            'billing__id',
         ]
 
 

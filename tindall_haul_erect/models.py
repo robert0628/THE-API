@@ -69,8 +69,12 @@ class Load(models.Model):
         return f"Load {self.job_name} {self.job_num} {self.dispatch_date}"
 
     @property
-    def approved(self):
+    def billing__approved(self):
         return self.billing.approved
+
+    @property
+    def billing__id(self):
+        return self.billing.id
 
 
 class PreStressBillingLookup(models.Model):

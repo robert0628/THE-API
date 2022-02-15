@@ -2,6 +2,8 @@ from django_filters import rest_framework as filters
 from .models import Driver, Load, Billing, Rate, PreStressBillingLookup, UtilitiesBillingLookup, UnloadingTimeLookup, \
     SiteSettlement, DriverSettlement
 
+from django_property_filter import PropertyFilterSet, PropertyBooleanFilter, PropertyOrderingFilter
+
 
 # For more information about django_filters see the documentation here
 # https://django-filter.readthedocs.io/en/latest/guide/rest_framework.html
@@ -41,9 +43,10 @@ class DriverFilter(filters.FilterSet):
         fields = ['first_name', 'last_name']
 
 
-class LoadFilter(filters.FilterSet):
+class LoadFilter(PropertyFilterSet):
     job_name = filters.CharFilter(field_name="job_name", lookup_expr="contains")
     dispatch_date = filters.DateFilter(field_name="dispatch_date", lookup_expr="exact")
+    billing__approved = PropertyBooleanFilter(field_name="billing__approved", lookup_expr='exact')
 
     ordering = filters.OrderingFilter(
         fields=(

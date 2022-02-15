@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'localflavor',
     'rest_framework',
     'django_filters',
+    'django_property_filter',
     'corsheaders',
 ]
 
