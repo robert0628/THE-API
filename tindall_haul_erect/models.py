@@ -182,6 +182,14 @@ class SiteSettlement(models.Model):
     cancel = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
     wait = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
 
+    @property
+    def load__bill_to(self):
+        return self.load.bill_to
+
+    @property
+    def load__dispatch_date(self):
+        return self.load.dispatch_date
+
 
 class DriverSettlement(models.Model):
     """

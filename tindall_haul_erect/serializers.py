@@ -101,6 +101,18 @@ class DriverSettlementSerializer(serializers.ModelSerializer):
 class SiteSettlementSerializer(serializers.ModelSerializer):
     class Meta:
         model = SiteSettlement
-        fields = '__all__'
+        fields = [
+            'id',
+            'load',
+            'billing',
+            'base_std',
+            'addnl_std',
+            'sec_stop',
+            'layover',
+            'cancel',
+            'wait',
+            'load__bill_to',
+            'load__dispatch_date',
+        ]
 
 
