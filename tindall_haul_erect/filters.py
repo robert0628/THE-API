@@ -3,7 +3,7 @@ from .models import Driver, Load, Billing, Rate, PreStressBillingLookup, Utiliti
     SiteSettlement, DriverSettlement
 
 from django_property_filter import PropertyFilterSet, PropertyBooleanFilter, PropertyOrderingFilter, \
-    PropertyNumberFilter, PropertyDateFilter
+    PropertyNumberFilter, PropertyDateFilter, PropertyCharFilter
 
 
 # For more information about django_filters see the documentation here
@@ -154,6 +154,10 @@ class UnloadingTimeLookupFilter(filters.FilterSet):
 
 
 class SiteSettlementFilter(PropertyFilterSet):
+    load__dispatch_date = PropertyDateFilter(field_name="load__dispatch_date", lookup_expr='exact')
+    load__bill_to = PropertyCharFilter(field_name="load__bill_to", lookup_expr='contains')
+    load__job_name = PropertyCharFilter(field_name="load__job_name", lookup_expr='contains')
+
     ordering = filters.OrderingFilter(
         fields=(
             ('id', 'id'),
@@ -174,6 +178,7 @@ class SiteSettlementFilter(PropertyFilterSet):
 class DriverSettlementFilter(PropertyFilterSet):
     load__driver__id = PropertyNumberFilter(field_name="load__driver__id", lookup_expr='exact')
     load__dispatch_date = PropertyDateFilter(field_name="load__dispatch_date", lookup_expr='exact')
+    load__job_name = PropertyCharFilter(field_name="load__job_name", lookup_expr='contains')
 
     ordering = filters.OrderingFilter(
         fields=(

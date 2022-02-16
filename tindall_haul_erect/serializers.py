@@ -94,6 +94,7 @@ class DriverSettlementSerializer(serializers.ModelSerializer):
             'fringe',
             'tindall_haul_erect_work',
             'load__driver__id',
+            'load__job_name',
             'load__dispatch_date',
         ]
 
@@ -112,6 +113,7 @@ class SiteSettlementSerializer(serializers.ModelSerializer):
             'cancel',
             'wait',
             'load__bill_to',
+            'load__job_name',
             'load__dispatch_date',
         ]
 

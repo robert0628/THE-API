@@ -187,6 +187,10 @@ class SiteSettlement(models.Model):
         return self.load.bill_to
 
     @property
+    def load__job_name(self):
+        return self.load.job_name
+
+    @property
     def load__dispatch_date(self):
         return self.load.dispatch_date
 
@@ -215,6 +219,10 @@ class DriverSettlement(models.Model):
     @property
     def load__driver__id(self):
         return self.load.driver.id
+
+    @property
+    def load__job_name(self):
+        return self.load.job_name
 
     @property
     def load__dispatch_date(self):
