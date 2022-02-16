@@ -80,11 +80,27 @@ class UnloadingTimeLookupSerializer(serializers.ModelSerializer):
 class DriverSettlementSerializer(serializers.ModelSerializer):
     class Meta:
         model = DriverSettlement
-        fields = '__all__'
+        fields = [
+            'id',
+            'load',
+            'billing',
+            'base_std',
+            'addnl_std',
+            'sec_stop',
+            'per_diem',
+            'cancel',
+            'wait',
+            'Break',
+            'fringe',
+            'tindall_haul_erect_work',
+            'load__driver__id',
+            'load__dispatch_date',
+        ]
 
 
 class SiteSettlementSerializer(serializers.ModelSerializer):
     class Meta:
         model = SiteSettlement
         fields = '__all__'
+
 

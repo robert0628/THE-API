@@ -204,3 +204,10 @@ class DriverSettlement(models.Model):
     fringe = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
     tindall_haul_erect_work = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
 
+    @property
+    def load__driver__id(self):
+        return self.load.driver.id
+
+    @property
+    def load__dispatch_date(self):
+        return self.load.dispatch_date
