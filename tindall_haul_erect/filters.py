@@ -20,7 +20,7 @@ class DriverFilter(filters.FilterSet):
         The below url will order the response data by first_name
         url = 'http://192.168.1.40:8000/drivers/?first_name=&last_name=&ordering=first_name'
     """
-    first_name = filters.CharFilter(field_name="first_name", lookup_expr="contains")
+    last_name = filters.CharFilter(field_name="last_name", lookup_expr="contains")
     hire_date = filters.DateFilter(field_name="hire_date", lookup_expr="exact")
 
     ordering = filters.OrderingFilter(
@@ -40,7 +40,7 @@ class DriverFilter(filters.FilterSet):
 
     class Meta:
         model = Driver
-        fields = ['first_name', 'last_name']
+        fields = ['id']
 
 
 class LoadFilter(PropertyFilterSet):
