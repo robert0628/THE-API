@@ -2,7 +2,8 @@ from django_filters import rest_framework as filters
 from .models import Driver, Load, Billing, Rate, PreStressBillingLookup, UtilitiesBillingLookup, UnloadingTimeLookup, \
     SiteSettlement, DriverSettlement
 
-from django_property_filter import PropertyFilterSet, PropertyBooleanFilter, PropertyOrderingFilter, PropertyNumberFilter
+from django_property_filter import PropertyFilterSet, PropertyBooleanFilter, PropertyOrderingFilter, \
+    PropertyNumberFilter, PropertyDateFilter
 
 
 # For more information about django_filters see the documentation here
@@ -172,10 +173,12 @@ class SiteSettlementFilter(PropertyFilterSet):
 
 class DriverSettlementFilter(PropertyFilterSet):
     load__driver__id = PropertyNumberFilter(field_name="load__driver__id", lookup_expr='exact')
+    load__dispatch_date = PropertyDateFilter(field_name="load__dispatch_date", lookup_expr='exact')
 
     ordering = filters.OrderingFilter(
         fields=(
             ('id', 'id'),
+            ('load', 'load'),
             ('billing', 'billing'),
             ('base_std', 'base_std'),
             ('addnl_std', 'addnl_std'),
