@@ -44,6 +44,7 @@ class LoadSerializer(serializers.ModelSerializer):
             'billing__approved',
             'billing__id',
             'siteSettlement__id',
+            'driverSettlement__id',
         ]
 
 
@@ -62,7 +63,24 @@ class UtilitiesBillingLookupSerializer(serializers.ModelSerializer):
 class BillingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Billing
-        fields = '__all__'
+        fields = [
+            'id',
+            'load',
+            'base_std_hrs',
+            'addnl_std_hrs',
+            'sec_stop_hrs',
+            'wait_start_time',
+            'wait_end_time',
+            'wait_hrs',
+            'break_hrs',
+            'fringe_hrs',
+            'tindall_haul_erect_work_hrs',
+            'approved',
+            'total_hrs',
+            'load__driver__id',
+            'load__job_name',
+            'load__dispatch_date',
+        ]
 
 
 class RateSerializer(serializers.ModelSerializer):
@@ -93,6 +111,7 @@ class DriverSettlementSerializer(serializers.ModelSerializer):
             'Break',
             'fringe',
             'tindall_haul_erect_work',
+            'total',
             'load__driver__id',
             'load__job_name',
             'load__dispatch_date',
@@ -112,6 +131,7 @@ class SiteSettlementSerializer(serializers.ModelSerializer):
             'layover',
             'cancel',
             'wait',
+            'total',
             'load__bill_to',
             'load__job_name',
             'load__dispatch_date',

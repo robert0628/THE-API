@@ -80,6 +80,10 @@ class Load(models.Model):
     def siteSettlement__id(self):
         return self.sitesettlement.id
 
+    @property
+    def driverSettlement__id(self):
+        return self.driversettlement.id
+
 
 class PreStressBillingLookup(models.Model):
     """
@@ -128,6 +132,23 @@ class Billing(models.Model):
     fringe_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
     tindall_haul_erect_work_hrs = models.DecimalField(max_digits=4, decimal_places=2, blank=False, default=0.0)
     approved = models.BooleanField(default=False)
+
+    @property
+    def total_hrs(self):
+        return self.base_std_hrs + self.addnl_std_hrs + self.sec_stop_hrs + self.wait_hrs + \
+               self.break_hrs + self.fringe_hrs + self.tindall_haul_erect_work_hrs
+
+    @property
+    def load__driver__id(self):
+        return self.load.driver.id
+
+    @property
+    def load__job_name(self):
+        return self.load.job_name
+
+    @property
+    def load__dispatch_date(self):
+        return self.load.dispatch_date
 
 
 class Rate(models.Model):
@@ -183,6 +204,10 @@ class SiteSettlement(models.Model):
     wait = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
 
     @property
+    def total(self):
+        return self.base_std + self.addnl_std + self.sec_stop + self.layover + self.cancel + self.wait
+
+    @property
     def load__bill_to(self):
         return self.load.bill_to
 
@@ -215,6 +240,11 @@ class DriverSettlement(models.Model):
     Break = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
     fringe = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
     tindall_haul_erect_work = models.DecimalField(max_digits=6, decimal_places=2, blank=False, default=0.0)
+
+    @property
+    def total(self):
+        return self.base_std + self.addnl_std + self.sec_stop + self.per_diem + self.cancel + self.wait + \
+               self.Break + self.fringe + self.tindall_haul_erect_work
 
     @property
     def load__driver__id(self):

@@ -71,7 +71,11 @@ class LoadFilter(PropertyFilterSet):
         fields = ['job_name', 'driver']
 
 
-class BillingFilter(filters.FilterSet):
+class BillingFilter(PropertyFilterSet):
+    load__driver__id = PropertyNumberFilter(field_name="load__driver__id", lookup_expr='exact')
+    load__dispatch_date = PropertyDateFilter(field_name="load__dispatch_date", lookup_expr='exact')
+    load__job_name = PropertyCharFilter(field_name="load__job_name", lookup_expr='contains')
+
     ordering = filters.OrderingFilter(
         fields=(
             ('id', 'id'),
@@ -90,7 +94,7 @@ class BillingFilter(filters.FilterSet):
 
     class Meta:
         model = Billing
-        fields = ['load']
+        fields = ['id']
 
 
 class RateFilter(filters.FilterSet):
