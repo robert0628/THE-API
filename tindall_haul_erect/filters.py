@@ -9,6 +9,9 @@ from django_property_filter import PropertyFilterSet, PropertyBooleanFilter, Pro
 # For more information about django_filters see the documentation here
 # https://django-filter.readthedocs.io/en/latest/guide/rest_framework.html
 
+# For more information on using filters for the @properties see,
+# https://django-property-filter.readthedocs.io/en/stable/
+
 
 class DriverFilter(filters.FilterSet):
     """
