@@ -92,6 +92,7 @@ class BillingFilter(PropertyFilterSet):
             ('break_hrs', 'break_hrs'),
             ('fringe_hrs', 'fringe_hrs'),
             ('tindall_haul_erect_work_hrs', 'tindall_haul_erect_work_hrs'),
+            ('approved', 'approved'),
         )
     )
 
@@ -168,6 +169,7 @@ class SiteSettlementFilter(PropertyFilterSet):
     ordering = filters.OrderingFilter(
         fields=(
             ('id', 'id'),
+            ('load', 'load'),
             ('billing', 'billing'),
             ('base_std', 'base_std'),
             ('addnl_std', 'addnl_std'),
@@ -197,6 +199,7 @@ class DriverSettlementFilter(PropertyFilterSet):
             ('sec_stop', 'sec_stop'),
             ('per_diem', 'per_diem'),
             ('cancel', 'cancel'),
+            ('fringe', 'fringe'),
             ('tindall_haul_erect_work', 'tindall_haul_erect_work'),
         )
     )

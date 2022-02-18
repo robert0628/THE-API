@@ -126,6 +126,7 @@ class LoadViewSet(viewsets.ModelViewSet):
             # addnl std hrs
             addnl_std_hrs = lookup_addnl_std_hrs(serializer.data["delivery_type"], serializer.data["pieces"])
             Billing.objects.filter(load=instance).update(addnl_std_hrs=addnl_std_hrs)
+            # TODO add logic for if there is a wait time re-calculate as well
 
         if getattr(instance, '_prefetched_objects_cache', None):
             # If 'prefetch_related' has been applied to a queryset, we need to
