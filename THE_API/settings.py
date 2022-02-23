@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'localflavor',
     'rest_framework',
+    'rest_framework.authtoken',
     'django_filters',
     'django_property_filter',
     'corsheaders',
@@ -120,7 +121,10 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     # see https://www.django-rest-framework.org/api-guide/filtering/ for filtering
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny'
+        'azure_auth.authentication.DjangoModelPermissionsExtended'
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'azure_auth.authentication.ExpiringTokenAuthentication'
     ],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
@@ -151,3 +155,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# use these settings with azure_auth.authentication
+TOKEN_EXPIRED_AFTER_SECONDS = 259200  # 3 days
+AZURE_AUTH_TYPE_PREFIX = 'Bearer'
+AZURE_AUDIENCE = "api://7eefc596-7dc8-45fc-b1a4-d097915940a2"  #i.e. the exposed web api
+AZURE_ALLOWED_ALGORITHMS = ['RS256']
+AZURE_ISSUER = "https://sts.windows.net/459d0de0-228b-41cf-99bf-e12106d5de82/"
+# AZURE app registration, use the tenant ID with openID endpoint to get the jwk_uri endpoint for the public keys
+AZURE_TENANT_ID = "459d0de0-228b-41cf-99bf-e12106d5de82"
+AZURE_OPENID_CONFIG = f"https://login.microsoftonline.com/{AZURE_TENANT_ID}/v2.0/.well-known/openid-configuration"
