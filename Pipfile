@@ -25,6 +25,7 @@ django-cors-headers = "*"
 pyjwt = "*"
 requests = "*"
 cryptography = "*"
+pandas = "*"
 
 [dev-packages]
 
