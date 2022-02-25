@@ -26,6 +26,7 @@ pyjwt = "*"
 requests = "*"
 cryptography = "*"
 pandas = "*"
+numpy = "*"
 
 [dev-packages]
 
