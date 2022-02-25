@@ -6,7 +6,7 @@ import pandas as pd
 class Command(BaseCommand):
     """
     Description:
-    Bulk insert the pre-stress billing lookup data using pandas and django model bulk_create
+    Bulk insert the drivers data using pandas and django model bulk_create
 
     Example (terminal):
         $python manage.py add_drivers ./tindall_haul_erect/csv_files/drivers.csv
